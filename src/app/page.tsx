@@ -4,7 +4,7 @@ const page = () => {
   return (
     <div>
       <h1 className='text-2xl font-bold'>Hello World</h1>
-      <Button variant="outline">Click Me</Button>
+      <Button >Click Me</Button>
 
     </div>
   )
