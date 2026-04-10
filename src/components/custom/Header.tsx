@@ -7,9 +7,9 @@ import { Button } from '../ui/button';
 const Header = () => {
     return (
         <header className="bg-white">
-            <nav className="container py-5 flex items-center justify-between">
+            <nav className="container mx-auto px-6 lg:px-12 py-5 flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                    <svg
+                     <svg
                         data-testid="logo"
                         width="90"
                         height="27"
@@ -33,6 +33,7 @@ const Header = () => {
                         </SelectContent>
                     </Select>
                 </div>
+
                 <div className="flex items-center gap-x-4">
                     <ul className="flex items-center font-medium space-x-4">
                         <li>
@@ -46,6 +47,7 @@ const Header = () => {
                             </Link>
                         </li>
                     </ul>
+
                     <div className="relative">
                         <Link href="/cart">
                             <ShoppingBasket className="hover:text-primary" />
@@ -54,10 +56,12 @@ const Header = () => {
                             3
                         </span>
                     </div>
+
                     <div className="flex items-center ml-12">
                         <Phone />
                         <span>+91 9800 098 998</span>
                     </div>
+
                     <Button size={'sm'}>Logout</Button>
                 </div>
             </nav>
