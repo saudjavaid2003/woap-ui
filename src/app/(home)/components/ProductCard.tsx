@@ -1,12 +1,7 @@
 import Image from 'next/image';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader } from '../../../components/ui/card';
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
@@ -14,12 +9,10 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '../../../components/ui/dialog';
+} from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 import { Label } from '../../../components/ui/label';
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
+import ToppingList from './topping-list';
 
 export type Product = {
     id: string;
@@ -43,10 +36,10 @@ const ProductCard = ({ product }: PropTypes) => {
             <CardFooter className="flex items-center justify-between mt-4">
                 <p>
                     <span>From </span>
-                    <span className="font-bold">Rs{product.price}</span>
+                    <span className="font-bold">₹{product.price}</span>
                 </p>
-                
-                    <Dialog>
+
+                <Dialog>
                     <DialogTrigger className="bg-orange-200 hover:bg-orange-300 text-orange-500 px-6 py-2 rounded-full shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150">
                         Choose
                     </DialogTrigger>
@@ -147,13 +140,14 @@ const ProductCard = ({ product }: PropTypes) => {
                                         </div>
                                     </RadioGroup>
                                 </div>
+
+                                <ToppingList />
                             </div>
                         </div>
                     </DialogContent>
                 </Dialog>
             </CardFooter>
         </Card>
-     
     );
 };
 
