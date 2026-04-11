@@ -20,7 +20,7 @@ const ProductList = async () => {
     // todo: add pagination
     const productsResponse = await fetch(
         // todo: add dynamic tenantId
-        `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=10`,
+        `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=2`,
         {
             next: {
                 revalidate: 3600, // 1 hour
