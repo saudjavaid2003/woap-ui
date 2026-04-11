@@ -1,66 +1,39 @@
 import Image from 'next/image';
-import { Button } from '../../components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import ProductCard, { Product } from './components/ProductCard';
-import { Category } from '@/lib/types';
-
-
-const products: Product[] = [
-    {
-        id: '1',
-        name: 'Margarita Pizza',
-        description: 'This is a very tasty pizza',
-        image: '/pizza-main.png',
-        price: 500,
-    },
-    {
-        id: '2',
-        name: 'Margarita Pizza',
-        description: 'This is a very tasty pizza',
-        image: '/pizza-main.png',
-        price: 500,
-    },
-    {
-        id: '3',
-        name: 'Margarita Pizza',
-        description: 'This is a very tasty pizza',
-        image: '/pizza-main.png',
-        price: 500,
-    },
-    {
-        id: '4',
-        name: 'Margarita Pizza',
-        description: 'This is a very tasty pizza',
-        image: '/pizza-main.png',
-        price: 500,
-    },
-    {
-        id: '5',
-        name: 'Margarita Pizza',
-        description: 'This is a very tasty pizza',
-        image: '/pizza-main.png',
-        price: 500,
-    },
-];
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ProductCard from './components/ProductCard';
+import { Category, Product } from '@/lib/types';
 
 export default async function Home() {
-    const categoryResponse = await fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
-        next: {
-            revalidate: 3600, // 1 hour
-        },
-    });
+    // 🔥 Fetch BOTH in parallel (better)
+    const [categoryResponse, productsResponse] = await Promise.all([
+        fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
+            next: { revalidate: 3600 },
+        }),
+        fetch(
+            `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=10`,
+            {
+                next: { revalidate: 3600 },
+            }
+        ),
+    ]);
 
     if (!categoryResponse.ok) {
         throw new Error('Failed to fetch categories');
     }
 
+    if (!productsResponse.ok) {
+        throw new Error('Failed to fetch products');
+    }
+
     const categories: Category[] = await categoryResponse.json();
+    const products: { data: Product[] } = await productsResponse.json();
+
     return (
         <>
             {/* HERO SECTION */}
             <section className="bg-white">
                 <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between py-24">
-                    
                     <div>
                         <h1 className="text-7xl font-black font-sans leading-tight">
                             Super Delicious Pizza in <br />
@@ -92,43 +65,37 @@ export default async function Home() {
             {/* PRODUCTS SECTION */}
             <section>
                 <div className="container mx-auto px-6 lg:px-12 py-12">
-                    
-                    <Tabs defaultValue="pizza" className="w-full">
-                        
-                          <TabsList>
-                            {categories.map((category) => {
-                                return (
-                                    <TabsTrigger
-                                        key={category._id}
-                                        value={category._id}
-                                        className="text-md">
-                                        {category.name}
-                                    </TabsTrigger>
-                                );
-                            })}
-                            {/* <TabsTrigger value="beverages" className="text-md">
-                                Beverages
-                            </TabsTrigger> */}
+                    <Tabs defaultValue={categories?.[0]?._id}>
+                        <TabsList>
+                            {categories.map((category) => (
+                                <TabsTrigger
+                                    key={category._id}
+                                    value={category._id}
+                                    className="text-md"
+                                >
+                                    {category.name}
+                                </TabsTrigger>
+                            ))}
                         </TabsList>
 
-                        <TabsContent value="pizza">
-                            <div className="grid grid-cols-4 gap-6 mt-6">
-                                {products.map((product) => (
-                                    <ProductCard product={product} key={product.id} />
-                                ))}
-                            </div>
-                        </TabsContent>
-
-                        <TabsContent value="beverages">
-                            <div className="grid grid-cols-4 gap-6 mt-6">
-                                {products.map((product) => (
-                                    <ProductCard product={product} key={product.id} />
-                                ))}
-                            </div>
-                        </TabsContent>
-
+                        {categories.map((category) => (
+                            <TabsContent key={category._id} value={category._id}>
+                                <div className="grid grid-cols-4 gap-6 mt-6">
+                                    {products.data
+                                        .filter(
+                                            (product) =>
+                                                product.category._id === category._id
+                                        )
+                                        .map((product) => (
+                                            <ProductCard
+                                                product={product}
+                                                key={product._id}
+                                            />
+                                        ))}
+                                </div>
+                            </TabsContent>
+                        ))}
                     </Tabs>
-
                 </div>
             </section>
         </>
