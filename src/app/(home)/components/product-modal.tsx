@@ -9,7 +9,7 @@ import ToppingList from './topping-list';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Product } from '@/lib/types';
 import { Label } from '@/components/ui/label';
-
+import { Suspense } from 'react';
 const ProductModal = ({ product }: { product: Product }) => {
     const handleAddToCart = () => {
         // todo: add to cart logic
@@ -58,8 +58,9 @@ const ProductModal = ({ product }: { product: Product }) => {
                                 </div>
                             );
                         })}
-
-                        <ToppingList />
+ <Suspense fallback={'Toppings loading...'}>
+                            <ToppingList />
+                        </Suspense>
 
                         <div className="flex items-center justify-between mt-12">
                             <span className="font-bold">₹400</span>
