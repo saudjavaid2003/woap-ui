@@ -1,12 +1,53 @@
 import Image from 'next/image';
 import { Button } from '../../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
+import ProductCard, { Product } from './components/ProductCard';
+
+const products: Product[] = [
+    {
+        id: '1',
+        name: 'Margarita Pizza',
+        description: 'This is a very tasty pizza',
+        image: '/pizza-main.png',
+        price: 500,
+    },
+    {
+        id: '2',
+        name: 'Margarita Pizza',
+        description: 'This is a very tasty pizza',
+        image: '/pizza-main.png',
+        price: 500,
+    },
+    {
+        id: '3',
+        name: 'Margarita Pizza',
+        description: 'This is a very tasty pizza',
+        image: '/pizza-main.png',
+        price: 500,
+    },
+    {
+        id: '4',
+        name: 'Margarita Pizza',
+        description: 'This is a very tasty pizza',
+        image: '/pizza-main.png',
+        price: 500,
+    },
+    {
+        id: '5',
+        name: 'Margarita Pizza',
+        description: 'This is a very tasty pizza',
+        image: '/pizza-main.png',
+        price: 500,
+    },
+];
 
 export default function Home() {
     return (
         <>
+            {/* HERO SECTION */}
             <section className="bg-white">
                 <div className="container mx-auto px-6 lg:px-12 flex items-center justify-between py-24">
+                    
                     <div>
                         <h1 className="text-7xl font-black font-sans leading-tight">
                             Super Delicious Pizza in <br />
@@ -27,17 +68,20 @@ export default function Home() {
                     <div>
                         <Image
                             alt="pizza-main"
-                            src={'/pizza-main.png'}
+                            src="/pizza-main.png"
                             width={400}
                             height={400}
                         />
                     </div>
                 </div>
             </section>
-            
-            <section className='ml-40'>
-                <div className="container py-12">
-                    <Tabs defaultValue="pizza" className="w-100" >
+
+            {/* PRODUCTS SECTION */}
+            <section>
+                <div className="container mx-auto px-6 lg:px-12 py-12">
+                    
+                    <Tabs defaultValue="pizza" className="w-full">
+                        
                         <TabsList>
                             <TabsTrigger value="pizza" className="text-md">
                                 Pizza
@@ -46,9 +90,25 @@ export default function Home() {
                                 Beverages
                             </TabsTrigger>
                         </TabsList>
-                        <TabsContent value="pizza">Pizza list</TabsContent>
-                        <TabsContent value="beverages">Beverages list </TabsContent>
+
+                        <TabsContent value="pizza">
+                            <div className="grid grid-cols-4 gap-6 mt-6">
+                                {products.map((product) => (
+                                    <ProductCard product={product} key={product.id} />
+                                ))}
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="beverages">
+                            <div className="grid grid-cols-4 gap-6 mt-6">
+                                {products.map((product) => (
+                                    <ProductCard product={product} key={product.id} />
+                                ))}
+                            </div>
+                        </TabsContent>
+
                     </Tabs>
+
                 </div>
             </section>
         </>
