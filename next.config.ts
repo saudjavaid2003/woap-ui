@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "mernspace-project.s3.ap-south-1.amazonaws.com",
+        hostname: "mern-fyp-bucket.s3.ap-south-1.amazonaws.com",
       },
     ],
   },
