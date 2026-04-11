@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Button } from '../../components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 
 export default function Home() {
     return (
@@ -31,6 +32,23 @@ export default function Home() {
                             height={400}
                         />
                     </div>
+                </div>
+            </section>
+            
+            <section className='ml-40'>
+                <div className="container py-12">
+                    <Tabs defaultValue="pizza" className="w-100" >
+                        <TabsList>
+                            <TabsTrigger value="pizza" className="text-md">
+                                Pizza
+                            </TabsTrigger>
+                            <TabsTrigger value="beverages" className="text-md">
+                                Beverages
+                            </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="pizza">Pizza list</TabsContent>
+                        <TabsContent value="beverages">Beverages list </TabsContent>
+                    </Tabs>
                 </div>
             </section>
         </>
