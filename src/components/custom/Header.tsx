@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Phone, ShoppingBasket } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Tenant } from '@/lib/types';
+import { Category } from '@/lib/types';
 
     const tenantsResponse = await fetch(`${process.env.BACKEND_URL}/api/auth/tenants?perPage=100`, {
         next: {

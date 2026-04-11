@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { Button } from '../../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import ProductCard, { Product } from './components/ProductCard';
+import { Category } from '@/lib/types';
+
 
 const products: Product[] = [
     {
@@ -41,7 +43,18 @@ const products: Product[] = [
     },
 ];
 
-export default function Home() {
+export default async function Home() {
+    const categoryResponse = await fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
+        next: {
+            revalidate: 3600, // 1 hour
+        },
+    });
+
+    if (!categoryResponse.ok) {
+        throw new Error('Failed to fetch categories');
+    }
+
+    const categories: Category[] = await categoryResponse.json();
     return (
         <>
             {/* HERO SECTION */}
@@ -82,13 +95,20 @@ export default function Home() {
                     
                     <Tabs defaultValue="pizza" className="w-full">
                         
-                        <TabsList>
-                            <TabsTrigger value="pizza" className="text-md">
-                                Pizza
-                            </TabsTrigger>
-                            <TabsTrigger value="beverages" className="text-md">
+                          <TabsList>
+                            {categories.map((category) => {
+                                return (
+                                    <TabsTrigger
+                                        key={category._id}
+                                        value={category._id}
+                                        className="text-md">
+                                        {category.name}
+                                    </TabsTrigger>
+                                );
+                            })}
+                            {/* <TabsTrigger value="beverages" className="text-md">
                                 Beverages
-                            </TabsTrigger>
+                            </TabsTrigger> */}
                         </TabsList>
 
                         <TabsContent value="pizza">
