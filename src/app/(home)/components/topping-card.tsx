@@ -12,11 +12,13 @@ export type Topping = {
     image: string;
     isAvailable: boolean;
 };
+
 type PropType = {
     topping: Topping;
     selectedToppings: Topping[];
     handleCheckBoxCheck: (topping: Topping) => void;
 };
+
 const ToppingCard = ({ topping, selectedToppings, handleCheckBoxCheck }: PropType) => {
     const isCurrentSelected = selectedToppings.some((element) => element.id === topping.id);
 
@@ -27,11 +29,18 @@ const ToppingCard = ({ topping, selectedToppings, handleCheckBoxCheck }: PropTyp
             className={cn(
                 'flex flex-col h-42 relative',
                 isCurrentSelected ? 'border-primary' : ''
-            )}>
+            )}
+        >
             <Image src={topping.image} width={80} height={80} alt={topping.name} />
+
             <h4>{topping.name}</h4>
-            <p>&#8377;{topping.price}</p>
-            {isCurrentSelected && <CircleCheck className="absolute top-1 right-1 text-primary" />}
+
+            {/* FIXED CURRENCY HERE */}
+            <p>Rs {topping.price}</p>
+
+            {isCurrentSelected && (
+                <CircleCheck className="absolute top-1 right-1 text-primary" />
+            )}
         </Button>
     );
 };
