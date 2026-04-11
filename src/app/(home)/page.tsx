@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
-import { Category, Product } from '@/lib/types';
+
 import { Suspense } from 'react';
 import ProductList from './components/product-list';
 

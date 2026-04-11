@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Phone, ShoppingBasket } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Tenant } from '@/lib/types';
-import { Category } from '@/lib/types';
+
 
     const tenantsResponse = await fetch(`${process.env.BACKEND_URL}/api/auth/tenants?perPage=100`, {
         next: {
@@ -38,7 +38,7 @@ const Header = () => {
                         />
                     </svg>
                     <Select>
-                        <SelectTrigger className="w-[180px] focus:ring-0">
+                        <SelectTrigger className="w-45 focus:ring-0">
                             <SelectValue placeholder="Select Restaurant" />
                         </SelectTrigger>
                         <SelectContent>

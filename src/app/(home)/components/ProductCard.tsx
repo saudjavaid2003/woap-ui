@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import React, { Suspense } from 'react';
+import React from 'react';
 
 
 import { Product } from '@/lib/types';
