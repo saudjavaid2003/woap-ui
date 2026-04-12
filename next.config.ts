@@ -9,7 +9,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  reactCompiler: true,
+  reactCompiler: false,
+  reactStrictMode:false,
 };
 
 export default nextConfig;

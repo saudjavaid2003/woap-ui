@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { Phone, ShoppingBasket } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Tenant } from '@/lib/types';
+import CartCounter from './cart-counter';
 
-
+const Header = async () => {
     const tenantsResponse = await fetch(`${process.env.BACKEND_URL}/api/auth/tenants?perPage=100`, {
         next: {
             revalidate: 3600, // 1 hour
@@ -16,15 +17,13 @@ import { Tenant } from '@/lib/types';
         throw new Error('Failed to fetch tenants');
     }
 
-
     const restaurants: { data: Tenant[] } = await tenantsResponse.json();
 
-const Header = () => {
     return (
         <header className="bg-white">
-            <nav className="container mx-auto px-6 lg:px-12 py-5 flex items-center justify-between">
+            <nav className="container py-5 flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                     <svg
+                    <svg
                         data-testid="logo"
                         width="90"
                         height="27"
@@ -38,11 +37,11 @@ const Header = () => {
                         />
                     </svg>
                     <Select>
-                        <SelectTrigger className="w-45 focus:ring-0">
+                        <SelectTrigger className="w-[180px] focus:ring-0">
                             <SelectValue placeholder="Select Restaurant" />
                         </SelectTrigger>
                         <SelectContent>
-                              {restaurants.data.map((restaurant) => {
+                            {restaurants.data.map((restaurant) => {
                                 return (
                                     <SelectItem key={restaurant.id} value={restaurant.id}>
                                         {restaurant.name}
@@ -52,7 +51,6 @@ const Header = () => {
                         </SelectContent>
                     </Select>
                 </div>
-
                 <div className="flex items-center gap-x-4">
                     <ul className="flex items-center font-medium space-x-4">
                         <li>
@@ -66,21 +64,11 @@ const Header = () => {
                             </Link>
                         </li>
                     </ul>
-
-                    <div className="relative">
-                        <Link href="/cart">
-                            <ShoppingBasket className="hover:text-primary" />
-                        </Link>
-                        <span className="absolute -top-4 -right-5 h-6 w-6 flex items-center justify-center rounded-full bg-primary font-bold text-white">
-                            3
-                        </span>
-                    </div>
-
+                    <CartCounter />
                     <div className="flex items-center ml-12">
                         <Phone />
                         <span>+91 9800 098 998</span>
                     </div>
-
                     <Button size={'sm'}>Logout</Button>
                 </div>
             </nav>
