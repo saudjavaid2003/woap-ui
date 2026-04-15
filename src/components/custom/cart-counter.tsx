@@ -1,5 +1,5 @@
 'use client';
-import { increment } from '../../lib/store/features/cart/cartSlice';
+// import { increment } from '../../lib/store/features/cart/cartSlice';
 import { useAppDispatch, useAppSelector } from '../../lib/hooks';
 import { ShoppingBasket } from 'lucide-react';
 import Link from 'next/link';
