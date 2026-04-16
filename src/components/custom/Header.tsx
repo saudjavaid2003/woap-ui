@@ -1,10 +1,10 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import Link from 'next/link';
-import { Phone, ShoppingBasket } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Tenant } from '@/lib/types';
-import CartCounter from './cart-counter';
+import CartCounterWrapper from './CartCounterWrapper';
 
 const Header = async () => {
     const tenantsResponse = await fetch(`${process.env.BACKEND_URL}/api/auth/tenants?perPage=100`, {
@@ -64,7 +64,7 @@ const Header = async () => {
                             </Link>
                         </li>
                     </ul>
-                    <CartCounter />
+                    <CartCounterWrapper />
                     <div className="flex items-center ml-12">
                         <Phone />
                         <span>+91 9800 098 998</span>

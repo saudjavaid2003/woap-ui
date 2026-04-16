@@ -1,5 +1,5 @@
 'use client';
-import {useAppSelector } from '../../lib/hooks';
+import {useAppSelector } from '../../lib/store/hooks';
 import { ShoppingBasket } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
