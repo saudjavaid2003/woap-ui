@@ -18,9 +18,12 @@ const ProductList = async ({ searchParams }: { searchParams: { restaurantId: str
     const categoryResponse = await fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
         next: { revalidate: 3600 },
     });
+    // const categories: Category[] = await categoryResponse.json();
+                                                                                
 
     if (!categoryResponse.ok) throw new Error('Failed to fetch categories');
     const categories: Category[] = await categoryResponse.json();
+    console.log('categories from API:', categories.map(c => c.name));   
 
     const productsResponse = await fetch(
         `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${restaurantId}`,
