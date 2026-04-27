@@ -1,10 +1,22 @@
 import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import React from 'react';
-
-
+import React, { Suspense } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import ToppingList from './topping-list';
+import { ShoppingCart } from 'lucide-react';
 import { Product } from '@/lib/types';
 import ProductModal from './product-modal';
+import { getFromPrice } from '@/lib/utils';
 
 // export type Product = {
 //     id: string;
@@ -28,7 +40,7 @@ const ProductCard = ({ product }: PropTypes) => {
             <CardFooter className="flex items-center justify-between mt-4">
                 <p>
                     <span>From </span>
-                    <span className="font-bold">Rs{100}</span>
+                    <span className="font-bold">₹{getFromPrice(product)}</span>
                 </p>
 
                 <ProductModal product={product} />
