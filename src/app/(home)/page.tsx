@@ -1,11 +1,16 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-
-
 import { Suspense } from 'react';
 import ProductList from './components/product-list';
 
-export default async function Home() {
+// Update the type to Promise
+export default async function Home({ 
+    searchParams 
+}: { 
+    searchParams: Promise<{ restaurantId: string }> 
+}) {
+    // Unwrapping the promise here
+    const resolvedParams = await searchParams;
 
     return (
         <>
@@ -19,11 +24,9 @@ export default async function Home() {
                                 Only 45 Minutes!
                             </span>
                         </h1>
-
                         <p className="text-2xl mt-8 max-w-lg leading-snug">
                             Enjoy a Free Meal if Your Order Takes More Than 45 Minutes!
                         </p>
-
                         <Button className="mt-8 text-lg rounded-full py-7 px-6 font-bold">
                             Get your pizza now
                         </Button>
@@ -35,13 +38,16 @@ export default async function Home() {
                             src="/pizza-main.png"
                             width={400}
                             height={400}
+                            priority // Fixed LCP warning from your logs
                         />
                     </div>
                 </div>
             </section>
-{/* todo: add skeleton component */}
+
             <Suspense fallback={'Loading....'}>
-                <ProductList />
-            </Suspense>        </>
+                {/* Pass the resolved object */}
+                <ProductList searchParams={resolvedParams} />
+            </Suspense>
+        </>
     );
 }
