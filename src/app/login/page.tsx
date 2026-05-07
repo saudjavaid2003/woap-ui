@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useActionState } from 'react';  // ✅ from react, not react-dom
-import { useFormStatus } from 'react-dom';
-import login from '../../lib/actions/login';
+import React, { useEffect } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+import login from '@/lib/actions/login';
 import { LoaderCircle } from 'lucide-react';
 
 const SubmitButton = () => {
@@ -33,31 +33,32 @@ const initialState = {
 };
 
 const Login = () => {
-    const [state, formAction] = useActionState(login, initialState); // ✅ useActionState
+    const [state, formAction] = useFormState(login, initialState);
+
+    // ✅ use useEffect for side effects like redirects
+    useEffect(() => {
+        if (state.type === 'success') {
+            window.location.href = '/';
+        }
+    }, [state.type]);
 
     return (
         <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
             <div className="flex items-center justify-center py-12">
                 <div className="mx-auto grid w-[350px] gap-6">
                     <div className="grid gap-2 text-center">
+                        <p
+                            aria-live="polite"
+                            className={`${
+                                state.type === 'error' ? 'text-red-500' : 'text-green-500'
+                            }`}>
+                            {state.message}
+                        </p>
                         <h1 className="text-3xl font-bold">Login</h1>
                         <p className="text-balance text-muted-foreground">
                             Enter your email below to login to your account
                         </p>
                     </div>
-
-                    {/* ✅ Show error or success message */}
-                    {state.message && (
-                        <p
-                            aria-live="polite"
-                            className={`text-sm text-center font-medium ${
-                                state.type === 'error' ? 'text-red-500' : 'text-green-500'
-                            }`}
-                        >
-                            {state.message}
-                        </p>
-                    )}
-
                     <form action={formAction}>
                         <div className="grid gap-4">
                             <div className="grid gap-2">
@@ -84,7 +85,6 @@ const Login = () => {
                             <SubmitButton />
                         </div>
                     </form>
-
                     <div className="mt-4 text-center text-sm">
                         Don&apos;t have an account?{' '}
                         <Link href="/signup" className="underline">
@@ -101,7 +101,6 @@ const Login = () => {
                     style={{ objectFit: 'cover' }}
                     alt="Image"
                     className="h-screen"
-                    loading="eager"  // ✅ also fixes the LCP warning from your logs
                 />
             </div>
         </div>
