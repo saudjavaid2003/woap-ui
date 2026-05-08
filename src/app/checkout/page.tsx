@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -20,14 +20,20 @@ import { redirect } from 'next/navigation';
 export default async function Checkout({
     searchParams,
 }: {
-    searchParams: { restaurantId: string };
+    searchParams: Promise<{ restaurantId: string }>;
 }) {
     const session = await getSession();
+    const resolvedParams = await searchParams;
 
-    const queryString = new URLSearchParams(searchParams).toString();
+      const sParams = new URLSearchParams(resolvedParams);
+    const existingQueryString = sParams.toString();
+
+    sParams.append('return-to', `/checkout?${existingQueryString}`);
+
+    // /login?return-to=/checkout?existingQueryString
 
     if (!session) {
-        redirect(`/login?${queryString}`);
+        redirect(`/login?${sParams}`);
     }
 
     return (
@@ -87,8 +93,7 @@ export default async function Checkout({
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="option-one" id="option-one" />
                                             <Label htmlFor="option-one" className="leading-normal">
-                                                123, ABC Street, Malad West, Mumbai, Maharashtra,
-                                                India 400064
+                                                shahid shaheed road shorkot city
                                             </Label>
                                         </div>
                                     </Card>
@@ -96,8 +101,7 @@ export default async function Checkout({
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="option-two" id="option-two" />
                                             <Label htmlFor="option-two" className="leading-normal">
-                                                Flat No. 501, Sunshine Apartments, Andheri East,
-                                                Mumbai, Maharashtra, India 400069
+                                                dha phase 1 lahore
                                             </Label>
                                         </div>
                                     </Card>
@@ -172,14 +176,13 @@ export default async function Checkout({
                     </div>
                     <div className="flex items-center gap-4">
                         <Input
-                            id="fname"
+                            id="coupon"
                             type="text"
                             className="w-full"
                             placeholder="Coupon code"
                         />
                         <Button variant={'outline'}>Apply</Button>
                     </div>
-
                     <div className="text-right mt-6">
                         <Button>Place order</Button>
                     </div>
