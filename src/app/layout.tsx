@@ -6,7 +6,7 @@ import Header from '../components/custom/Header';
 import StoreProvider from './StoreProvider';
 import { Toaster } from "../components/ui/sonner";
 import Refresher from '../components/custom/refresher';
-
+import QueryProvider from './QueryProvider';
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
 
 export const metadata: Metadata = {
@@ -27,11 +27,13 @@ export default function RootLayout({
                         'min-h-screen bg-background font-manrope antialiased',
                         manrope.variable
                     )}>
-                    <Refresher>
-                        <Header />
-                        <main>{children}</main>
-                        <Toaster />
-                    </Refresher>
+                   <QueryProvider>
+                        <Refresher>
+                            <Header />
+                            <main>{children}</main>
+                            <Toaster />
+                        </Refresher>
+                    </QueryProvider>
                 </body>
             </StoreProvider>
         </html>
