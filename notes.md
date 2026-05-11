@@ -5,3 +5,7 @@ mutation function pora pora ka pora call ho raha ender wala callback nai asolun 
 hayee allah itni mehnat ker raha houn sir ko pasand ah jay bas
 redirect kenray kay bad page per 
 cart ko empty kerna ha todo ha 
+
+
+direct the user to payment succes url the 
+url u added in stripe.js class in order service
