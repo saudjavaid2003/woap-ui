@@ -56,9 +56,9 @@ const Payment = async ({
                                 <LayoutDashboard size={20} />
                                 <h2 className="text-base font-medium">Order reference: </h2>
                                 <Link
-                                    href={`/order-status/${searchParams.orderId}`}
+                                    href={`/order-status/${orderId}`}
                                     className="underline">
-                                    {searchParams.orderId}
+                                    {orderId}
                                 </Link>
                             </div>
 
@@ -74,7 +74,7 @@ const Payment = async ({
                 {isOrderSuccess ? (
                     <Button asChild className="mt-6">
                         <Link
-                            href={`/order-status/${searchParams.orderId}?restaurantId=${searchParams.restaurantId}`}
+                            href={`/order-status/${orderId}?restaurantId=${restaurantId}`}
                             className="flex items-center gap-2">
                             <ArrowLeft size={20} className="text-white" />
                             <span>Go to order status page</span>
@@ -83,7 +83,7 @@ const Payment = async ({
                 ) : (
                     <Button asChild className="mt-6">
                         <Link
-                            href={`/checkout?restaurantId=${searchParams.restaurantId}`}
+                            href={`/checkout?restaurantId=${restaurantId}`}
                             className="flex items-center gap-2">
                             <ArrowLeft size={20} className="text-white" />
                             <span>Go to checkout</span>
