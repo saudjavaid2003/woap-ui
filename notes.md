@@ -13,3 +13,7 @@ ek kam kerna paray gha jo ha tenantId PAYMENT PAGE takay redirect karoun place a
 
 
 success true aur orderId DHALNA payment page ko dyanmci kertay hoay
+
+cart clear bhi kerna ha to aisay likhna kay aghr payment fial  ho jati ha o cart khali na ho 
+
+refresher wali logic use ker lein
