@@ -2,10 +2,10 @@
 import React from 'react';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { Coins, CreditCard} from 'lucide-react';
+import { Coins, CreditCard, Plus } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-// import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,18 +18,21 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import OrderSummary from './orderSummary';
-import { useAppSelector } from '@/lib/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { useSearchParams } from 'next/navigation';
+import { clearCart } from '@/lib/store/features/cart/cartSlice';
 
 const formSchema = z.object({
     address: z.string({ error: 'Please select an address.' }),
     paymentMode: z.enum(['card', 'cash'] as const , {
-        error: 'You need to select a payment mode type.',
+        error : 'You need to select a payment mode type.',
     }),
     comment: z.any(),
 });
 
 const CustomerForm = () => {
+    const dispatch = useAppDispatch();
+
     const customerForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
@@ -64,6 +67,7 @@ const CustomerForm = () => {
             }
 
             alert('Order placed successfully!');
+            dispatch(clearCart());
 
             // todo: This will happen if payment mode is Cash.
             // todo: 1. Clear the cart 2. Redirect the user to order status page.
