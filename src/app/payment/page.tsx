@@ -7,12 +7,13 @@ import Link from 'next/link';
 import React from 'react';
 import CartCleaner from '../checkout/components/cartCleaner';
 
-const Payment = ({
+const Payment = async ({
     searchParams,
 }: {
-    searchParams: { success: string; orderId: string; restaurantId: string };
+    searchParams: Promise<{ success: string; orderId: string; restaurantId: string }>;
 }) => {
-    const isOrderSuccess = searchParams.success === 'true';
+    const { success, orderId, restaurantId } = await searchParams;
+    const isOrderSuccess = success === 'true';
 
     return (
         <>
