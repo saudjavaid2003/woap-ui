@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/no-explicit-any': 'off', 
       // Disables the warning for empty objects/types
       '@typescript-eslint/no-empty-object-type': 'off',
+        'react-compiler/react-compiler': 'off',
     },
   },
   // Global ignores must be in their own configuration object or via globalIgnores

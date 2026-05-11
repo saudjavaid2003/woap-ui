@@ -1,10 +1,9 @@
 'use client';
 import React from 'react';
 import { z } from 'zod';
-import { Coins, CreditCard, Plus } from 'lucide-react';
+import { Coins, CreditCard } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +16,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import OrderSummary from './orderSummary';
+import { useAppSelector } from '@/lib/store/hooks';
+import { useSearchParams } from 'next/navigation';
 
+
+
+// After
 const formSchema = z.object({
     address: z.string({ error: 'Please select an address.' }),
     paymentMode: z.enum(['card', 'cash'] as const, {
@@ -25,11 +29,15 @@ const formSchema = z.object({
     }),
     comment: z.any(),
 });
-
 const CustomerForm = () => {
     const customerForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
+
+    const searchParam = useSearchParams();
+
+    const chosenCouponCode = React.useRef('');
+    const cart = useAppSelector((state) => state.cart);
 
     const { data: customer, isLoading } = useQuery<Customer>({
         queryKey: ['customer'],
@@ -44,8 +52,22 @@ const CustomerForm = () => {
     }
 
     const handlePlaceOrder = (data: z.infer<typeof formSchema>) => {
-        // handle place order call.
-        console.log('data', data);
+        const tenantId = searchParam.get('restaurantId');
+        if (!tenantId) {
+            alert('Restaurant Id is required!');
+            return;
+        }
+        const orderData = {
+            cart: cart.cartItems,
+            couponCode: chosenCouponCode.current ? chosenCouponCode.current : '',
+            tenantId: tenantId,
+            customerId: customer?._id,
+            comment: data.comment,
+            address: data.address,
+            paymentMode: data.paymentMode,
+        };
+
+        console.log('Data', orderData);
     };
 
     return (
@@ -220,7 +242,11 @@ const CustomerForm = () => {
                             </div>
                         </CardContent>
                     </Card>
-                    <OrderSummary />
+                    <OrderSummary
+                        handleCouponCodeChange={(code) => {
+                            chosenCouponCode.current = code;
+                        }}
+                    />
                 </div>
             </form>
         </Form>
