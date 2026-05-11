@@ -1,16 +1,18 @@
 'use client';
 import React from 'react';
 import { z } from 'zod';
-import { Coins, CreditCard } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { v4 as uuidv4 } from 'uuid';
+import { Coins, CreditCard, Plus } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
-import { getCustomer } from '@/lib/http/api';
-import { Customer } from '@/lib/types';
+import { createOrder, getCustomer } from '@/lib/http/api';
+import { Customer, OrderData } from '@/lib/types';
 import AddAdress from './addAddress';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,16 +21,14 @@ import OrderSummary from './orderSummary';
 import { useAppSelector } from '@/lib/store/hooks';
 import { useSearchParams } from 'next/navigation';
 
-
-
-// After
 const formSchema = z.object({
     address: z.string({ error: 'Please select an address.' }),
-    paymentMode: z.enum(['card', 'cash'] as const, {
+    paymentMode: z.enum(['card', 'cash'] as const , {
         error: 'You need to select a payment mode type.',
     }),
     comment: z.any(),
 });
+
 const CustomerForm = () => {
     const customerForm = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -37,6 +37,8 @@ const CustomerForm = () => {
     const searchParam = useSearchParams();
 
     const chosenCouponCode = React.useRef('');
+    const idempotencyKeyRef = React.useRef('');
+
     const cart = useAppSelector((state) => state.cart);
 
     const { data: customer, isLoading } = useQuery<Customer>({
@@ -44,6 +46,18 @@ const CustomerForm = () => {
         queryFn: async () => {
             return await getCustomer().then((res) => res.data);
         },
+    });
+
+    const { mutate, isPending: isPlaceOrderPending } = useMutation({
+        mutationKey: ['order'],
+        mutationFn: async (data: OrderData) => {
+            const idempotencyKey = idempotencyKeyRef.current
+                ? idempotencyKeyRef.current
+                : (idempotencyKeyRef.current = uuidv4() + customer?._id);
+
+            await createOrder(data, idempotencyKey);
+        },
+        retry: 3,
     });
 
     if (isLoading) {
@@ -57,17 +71,17 @@ const CustomerForm = () => {
             alert('Restaurant Id is required!');
             return;
         }
-        const orderData = {
+        const orderData: OrderData = {
             cart: cart.cartItems,
             couponCode: chosenCouponCode.current ? chosenCouponCode.current : '',
             tenantId: tenantId,
-            customerId: customer?._id,
+            customerId: customer ? customer._id : '',
             comment: data.comment,
             address: data.address,
             paymentMode: data.paymentMode,
         };
 
-        console.log('Data', orderData);
+        mutate(orderData);
     };
 
     return (
@@ -243,6 +257,7 @@ const CustomerForm = () => {
                         </CardContent>
                     </Card>
                     <OrderSummary
+                        isPlaceOrderPending={isPlaceOrderPending}
                         handleCouponCodeChange={(code) => {
                             chosenCouponCode.current = code;
                         }}
