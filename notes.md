@@ -9,3 +9,7 @@ cart ko empty kerna ha todo ha
 
 direct the user to payment succes url the 
 url u added in stripe.js class in order service
+ek kam kerna paray gha jo ha tenantId PAYMENT PAGE takay redirect karoun place another order walay link per 
+
+
+success true aur orderId DHALNA payment page ko dyanmci kertay hoay
