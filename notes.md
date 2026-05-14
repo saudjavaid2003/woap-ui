@@ -17,3 +17,15 @@ success true aur orderId DHALNA payment page ko dyanmci kertay hoay
 cart clear bhi kerna ha to aisay likhna kay aghr payment fial  ho jati ha o cart khali na ho 
 
 refresher wali logic use ker lein
+
+
+get single order per thora sa field projection lagha lein acha laghay gha 
+
+where to use sockets Yar sockets mehnghay bohat parain ghay aws per 
+what i am doing is to fetch the order status dynamiclly i am using polling time setting is 5 minutes cause cusotmer is not going to sit there and after every 5 seconds gonna see the whats the status now 
+sockets restraunt wali side per  laghaoun gha yahan nai sir gussa karain ghay to koi nai lekin benta yahi ha 
+
+statuses jo ah rahay hain na meray pass wo recent hain matalb received jo ha wo ho choka ha to aghar current status dikhana ha to +1 ker doun gha yar wo mapping ker lein pehlay 
+stepper kay ender
+todo:
+ma her 5 second per abhi kay liya usko call ker raha houn setstepper per bad may 30 minute kerna ha 

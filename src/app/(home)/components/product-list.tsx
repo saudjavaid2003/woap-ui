@@ -15,22 +15,31 @@ const ProductList = async ({ searchParams }: { searchParams: { restaurantId: str
         );
     }
 
+    console.log('BACKEND_URL:', process.env.BACKEND_URL);
+    console.log('Fetching categories from:', `${process.env.BACKEND_URL}/api/catalog/categories`);
+
     const categoryResponse = await fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
         next: { revalidate: 3600 },
     });
-    // const categories: Category[] = await categoryResponse.json();
-                                                                                
+
+    console.log('Category response status:', categoryResponse.status, categoryResponse.statusText);
 
     if (!categoryResponse.ok) throw new Error('Failed to fetch categories');
     const categories: Category[] = await categoryResponse.json();
-    console.log('categories from API:', categories.map(c => c.name));   
+    console.log('Categories fetched:', categories.map(c => c.name));
+
+    console.log('Fetching products for restaurantId:', restaurantId);
+    console.log('Products URL:', `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${restaurantId}`);
 
     const productsResponse = await fetch(
         `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${restaurantId}`,
         { next: { revalidate: 3600 } }
     );
 
+    console.log('Products response status:', productsResponse.status, productsResponse.statusText);
+
     const products: { data: Product[] } = await productsResponse.json();
+    console.log('Products fetched:', products.data?.length ?? 0, 'items');
 
     return (
         <section>
