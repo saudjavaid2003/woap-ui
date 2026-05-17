@@ -50,7 +50,7 @@ const CartItems = () => {
                 <CartItem key={cartItem.hash} item={cartItem} />
             ))}
             <div className="flex justify-between items-center">
-                <span className="font-bold text-xl">&#8377;{finalTotal}</span>
+                <span className="font-bold text-xl">Rs;{finalTotal}</span>
                 <Button
                     onClick={() =>
                         router.push(`/checkout/?restaurantId=${searchParams.get('restaurantId')}`)

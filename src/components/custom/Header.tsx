@@ -59,7 +59,7 @@ const Header = async () => {
                     <CartCounterWrapper />
                     <div className="flex items-center ml-12">
                         <Phone />
-                        <span>+91 9800 098 998</span>
+                        <span>+92 3320129080</span>
                     </div>
                    {session ? (
                         <Logout />

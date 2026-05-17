@@ -103,29 +103,29 @@ const OrderSummary = ({
             <CardContent className="grid gap-4 pt-6">
                 <div className="flex items-center justify-between">
                     <span>Subtotal</span>
-                    <span className="font-bold">₹{subTotal}</span>
+                    <span className="font-bold">Rs{subTotal}</span>
                 </div>
                 <div className="flex items-center justify-between">
                     <span>Taxes</span>
-                    <span className="font-bold">₹{taxesAmount}</span>
+                    <span className="font-bold">Rs{taxesAmount}</span>
                 </div>
                 <div className="flex items-center justify-between">
                     <span>Delivery charges</span>
-                    <span className="font-bold">₹{DELIVERY_CHARGES}</span>
+                    <span className="font-bold">Rs{DELIVERY_CHARGES}</span>
                 </div>
                 <div className="flex items-center justify-between">
                     <span>Discount</span>
-                    <span className="font-bold">₹{discountAmount}</span>
+                    <span className="font-bold">Rs{discountAmount}</span>
                 </div>
                 <hr />
                 <div className="flex items-center justify-between">
                     <span className="font-bold">Order total</span>
                     <span className="font-bold flex flex-col items-end">
                         <span className={discountPercentage ? 'line-through text-gray-400' : ''}>
-                            ₹{grandWithoutDiscountTotal}
+                            Rs{grandWithoutDiscountTotal}
                         </span>
                         {discountPercentage ? (
-                            <span className="text-green-700">${grandWithDiscountTotal}</span>
+                            <span className="text-green-700">Rs{grandWithDiscountTotal}</span>
                         ) : null}
                     </span>
                 </div>

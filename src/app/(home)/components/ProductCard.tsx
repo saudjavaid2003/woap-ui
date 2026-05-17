@@ -40,7 +40,7 @@ const ProductCard = ({ product }: PropTypes) => {
             <CardFooter className="flex items-center justify-between mt-4">
                 <p>
                     <span>From </span>
-                    <span className="font-bold">₹{getFromPrice(product)}</span>
+                    <span className="font-bold">Rs{getFromPrice(product)}</span>
                 </p>
 
                 <ProductModal product={product} />

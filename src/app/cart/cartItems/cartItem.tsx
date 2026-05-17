@@ -41,7 +41,7 @@ const CartItem = ({ item }: { item: Item }) => {
                         </QtyChanger>
                     </div>
                     <div className="flex">
-                        <div className="font-bold w-12">&#8377;{total * item.qty}</div>
+                        <div className="font-bold w-12">Rs;{total * item.qty}</div>
                         <button
                             className="ml-4"
                             onClick={() => {
