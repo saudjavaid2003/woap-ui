@@ -3,7 +3,6 @@ import { HorizontalStep } from './horizontal-step';
 import type { StepProps } from './types';
 import { useStepper } from './use-stepper';
 
-// Props which shouldn't be passed to to the Step component from the user
 interface StepInternalConfig {
     index: number;
     isCompletedStep?: boolean;
@@ -59,5 +58,7 @@ const Step = React.forwardRef<HTMLLIElement, StepProps>((props, ref: React.Ref<a
 
     return renderStep();
 });
+
+Step.displayName = "Step";
 
 export { Step };
