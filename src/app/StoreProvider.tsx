@@ -1,25 +1,30 @@
 'use client';
 import { setInitialCartItems } from '@/lib/store/features/cart/cartSlice';
 import { AppStore, makeStore } from '../lib/store';
-import { useRef } from 'react';
+import { useState } from 'react';
 import { Provider } from 'react-redux';
 
 export default function StoreProvider({ children }: { children: React.ReactNode }) {
-    const storeRef = useRef<AppStore>();
-    if (!storeRef.current) {
-        // Create the store instance the first time this renders
-        storeRef.current = makeStore();
-        // todo: set initial cart data from localstorage
+    // Use useState to initialize the store exactly once safely during creation
+    const [store] = useState(() => {
+        const storeInstance = makeStore();
+        
+        // Handle localStorage safely inside the initialization function
         const isLocalStorageAvailable = typeof window !== 'undefined' && window.localStorage;
         if (isLocalStorageAvailable) {
             const cartItems = window.localStorage.getItem('cartItems');
-            try {
-                const parsedItems = JSON.parse(cartItems as string);
-                storeRef.current.dispatch(setInitialCartItems(parsedItems));
-            } catch (err) {
-                console.error(err);
+            if (cartItems) {
+                try {
+                    const parsedItems = JSON.parse(cartItems);
+                    storeInstance.dispatch(setInitialCartItems(parsedItems));
+                } catch (err) {
+                    console.error('Failed to parse cart items from localStorage:', err);
+                }
             }
         }
-    }
-    return <Provider store={storeRef.current}>{children}</Provider>;
+        
+        return storeInstance;
+    });
+
+    return <Provider store={store}>{children}</Provider>;
 }
