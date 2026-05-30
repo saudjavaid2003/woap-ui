@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,10 +12,16 @@ import { LoaderCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
-// todo: Move this to the server, and calulate according to your business rules.
+// todo: Move this to the server, and calculate according to your business rules.
 const TAXES_PERCENTAGE = 18;
 // todo: Move this to the server (Order service).
 const DELIVERY_CHARGES = 100;
+
+// FIX: Explicitly type the expected shape of the coupon code validation response
+interface CouponVerifyResponse {
+    valid: boolean;
+    discount: number;
+}
 
 const OrderSummary = ({
     isPlaceOrderPending,
@@ -56,26 +64,32 @@ const OrderSummary = ({
     }, [subTotal, taxesAmount, DELIVERY_CHARGES]);
 
     // todo: display error isError, error
-    const { mutate } = useMutation({
+    const { mutate, isPending: isCouponValidating } = useMutation({
         mutationKey: ['couponCode'],
         mutationFn: async () => {
             if (!couponCodeRef.current) {
-                return;
+                return null;
             }
 
             const restaurantId = searchParam.get('restaurantId');
 
             if (!restaurantId) {
-                return;
+                return null;
             }
 
             const data: CouponCodeData = {
                 code: couponCodeRef.current.value,
                 tenantId: restaurantId,
             };
-            return await verifyCoupon(data).then((res) => res.data);
+            
+            const response = await verifyCoupon(data);
+            // Force cast the data to our interface so TypeScript knows what keys are present
+            return response.data as CouponVerifyResponse;
         },
         onSuccess: (data) => {
+            // Early return safe-guard if the function returned null due to missing refs/ids
+            if (!data) return;
+
             if (data.valid) {
                 setDiscountError('');
                 handleCouponCodeChange(couponCodeRef.current ? couponCodeRef.current.value : '');
@@ -91,7 +105,6 @@ const OrderSummary = ({
 
     const handleCouponValidation = (e: React.MouseEvent) => {
         e.preventDefault();
-
         mutate();
     };
 
@@ -139,9 +152,16 @@ const OrderSummary = ({
                         placeholder="Coupon code"
                         ref={couponCodeRef}
                     />
-                    {/* todo: add loading */}
-                    <Button onClick={handleCouponValidation} variant={'outline'}>
-                        Apply
+                    <Button 
+                        onClick={handleCouponValidation} 
+                        variant={'outline'}
+                        disabled={isCouponValidating}
+                    >
+                        {isCouponValidating ? (
+                            <LoaderCircle className="animate-spin h-4 w-4" />
+                        ) : (
+                            'Apply'
+                        )}
                     </Button>
                 </div>
 
