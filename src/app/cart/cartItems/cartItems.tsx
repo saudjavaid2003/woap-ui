@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React from 'react';
 import CartItem from './cartItem';
 import Link from 'next/link';
 import { useAppSelector } from '@/lib/store/hooks';
@@ -12,10 +12,6 @@ const CartItems = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
 
-    const [isClient, setIsClient] = React.useState(false);
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
     const cart = useAppSelector((state) => state.cart.cartItems);
 
     const finalTotal = React.useMemo(() => {
@@ -23,10 +19,6 @@ const CartItems = () => {
             return acc + curr.qty * getItemTotal(curr);
         }, 0);
     }, [cart]);
-
-    if (!isClient) {
-        return null;
-    }
 
     if (!cart.length) {
         return (
@@ -45,7 +37,7 @@ const CartItems = () => {
     }
 
     return (
-        <div className="flex flex-col gap-8 ">
+        <div className="flex flex-col gap-8">
             {cart.map((cartItem) => (
                 <CartItem key={cartItem.hash} item={cartItem} />
             ))}
