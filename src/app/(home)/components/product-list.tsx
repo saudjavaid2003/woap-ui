@@ -29,10 +29,10 @@ const ProductList = async ({ searchParams }: { searchParams: { restaurantId: str
     console.log('Categories fetched:', categories.map(c => c.name));
 
     console.log('Fetching products for restaurantId:', restaurantId);
-    console.log('Products URL:', `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${restaurantId}`);
+    console.log('Products URL:', `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&limit=100&tenantId=${restaurantId}`);
 
     const productsResponse = await fetch(
-        `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&tenantId=${restaurantId}`,
+        `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&limit=100&tenantId=${restaurantId}`,
         { next: { revalidate: 3600 } }
     );
 
