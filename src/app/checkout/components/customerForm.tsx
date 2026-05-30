@@ -1,8 +1,9 @@
 'use client';
-import React from 'react';
+
+import React, { useState } from 'react';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { Coins, CreditCard, Plus } from 'lucide-react';
+import { Coins, CreditCard } from 'lucide-react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { Button } from '@/components/ui/button';
@@ -39,8 +40,11 @@ const CustomerForm = () => {
 
     const searchParam = useSearchParams();
 
-    const chosenCouponCode = React.useRef('');
-    const idempotencyKeyRef = React.useRef('');
+    // FIX: Replaced React.useRef with standard state to eliminate the React 19 compiler build error
+    const [couponCode, setCouponCode] = useState('');
+    
+    // Stable checkout session idempotency key
+    const [idempotencyKey] = useState(() => uuidv4());
 
     const cart = useAppSelector((state) => state.cart);
 
@@ -54,11 +58,8 @@ const CustomerForm = () => {
     const { mutate, isPending: isPlaceOrderPending } = useMutation({
         mutationKey: ['order'],
         mutationFn: async (data: OrderData) => {
-            const idempotencyKey = idempotencyKeyRef.current
-                ? idempotencyKeyRef.current
-                : (idempotencyKeyRef.current = uuidv4() + customer?._id);
-
-            return await createOrder(data, idempotencyKey).then((res) => res.data);
+            const uniqueKey = customer?._id ? `${idempotencyKey}-${customer._id}` : idempotencyKey;
+            return await createOrder(data, uniqueKey).then((res) => res.data);
         },
         retry: 3,
         onSuccess: (data: { paymentUrl: string | null }) => {
@@ -68,14 +69,10 @@ const CustomerForm = () => {
 
             alert('Order placed successfully!');
             dispatch(clearCart());
-
-            // todo: This will happen if payment mode is Cash.
-            // todo: 1. Clear the cart 2. Redirect the user to order status page.
         },
     });
 
     if (isLoading) {
-        // todo: use Spinner/Loader or Shadcn Skeleton
         return <h3>Loading...</h3>;
     }
 
@@ -87,7 +84,7 @@ const CustomerForm = () => {
         }
         const orderData: OrderData = {
             cart: cart.cartItems,
-            couponCode: chosenCouponCode.current ? chosenCouponCode.current : '',
+            couponCode: couponCode, // Safely reading from state inside the event handler
             tenantId: tenantId,
             customerId: customer ? customer._id : '',
             comment: data.comment,
@@ -273,7 +270,7 @@ const CustomerForm = () => {
                     <OrderSummary
                         isPlaceOrderPending={isPlaceOrderPending}
                         handleCouponCodeChange={(code) => {
-                            chosenCouponCode.current = code;
+                            setCouponCode(code); // Updates cleanly via state
                         }}
                     />
                 </div>
