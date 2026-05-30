@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import login from '@/lib/actions/login';
@@ -14,7 +14,6 @@ import { useSearchParams } from 'next/navigation';
 
 const SubmitButton = () => {
     const { pending } = useFormStatus();
-
     return (
         <Button>
             {pending ? (
@@ -29,12 +28,9 @@ const SubmitButton = () => {
     );
 };
 
-const initialState = {
-    type: '',
-    message: '',
-};
+const initialState = { type: '', message: '' };
 
-const Login = () => {
+const LoginForm = () => {
     const [state, formAction] = useActionState(login, initialState);
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('return-to');
@@ -50,11 +46,7 @@ const Login = () => {
             <div className="flex items-center justify-center py-12">
                 <div className="mx-auto grid w-[350px] gap-6">
                     <div className="grid gap-2 text-center">
-                        <p
-                            aria-live="polite"
-                            className={`${
-                                state.type === 'error' ? 'text-red-500' : 'text-green-500'
-                            }`}>
+                        <p aria-live="polite" className={`${state.type === 'error' ? 'text-red-500' : 'text-green-500'}`}>
                             {state.message}
                         </p>
                         <h1 className="text-3xl font-bold">Login</h1>
@@ -66,20 +58,12 @@ const Login = () => {
                         <div className="grid gap-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    placeholder="m@example.com"
-                                    required
-                                />
+                                <Input id="email" type="email" name="email" placeholder="m@example.com" required />
                             </div>
                             <div className="grid gap-2">
                                 <div className="flex items-center">
                                     <Label htmlFor="password">Password</Label>
-                                    <Link
-                                        href="/forgot-password"
-                                        className="ml-auto inline-block text-sm underline">
+                                    <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
                                         Forgot your password?
                                     </Link>
                                 </div>
@@ -90,23 +74,23 @@ const Login = () => {
                     </form>
                     <div className="mt-4 text-center text-sm">
                         Don&apos;t have an account?{' '}
-                        <Link href="/register" className="underline">
-                            Sign up
-                        </Link>
+                        <Link href="/register" className="underline">Sign up</Link>
                     </div>
                 </div>
             </div>
             <div className="hidden bg-muted lg:block">
-                <Image
-                    src="/login-image.webp"
-                    width={1920}
-                    height={1080}
-                    style={{ objectFit: 'cover' }}
-                    alt="Image"
-                    className="h-screen"
-                />
+                <Image src="/login-image.webp" width={1920} height={1080} style={{ objectFit: 'cover' }} alt="Image" className="h-screen" />
             </div>
         </div>
+    );
+};
+
+// Wrap in Suspense because of useSearchParams
+const Login = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <LoginForm />
+        </Suspense>
     );
 };
 

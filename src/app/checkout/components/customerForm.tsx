@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { Coins, CreditCard } from 'lucide-react';
@@ -25,13 +25,13 @@ import { clearCart } from '@/lib/store/features/cart/cartSlice';
 
 const formSchema = z.object({
     address: z.string({ error: 'Please select an address.' }),
-    paymentMode: z.enum(['card', 'cash'] as const , {
-        error : 'You need to select a payment mode type.',
+    paymentMode: z.enum(['card', 'cash'] as const, {
+        error: 'You need to select a payment mode type.',
     }),
     comment: z.any(),
 });
 
-const CustomerForm = () => {
+const CustomerFormInner = () => {
     const dispatch = useAppDispatch();
 
     const customerForm = useForm<z.infer<typeof formSchema>>({
@@ -39,16 +39,10 @@ const CustomerForm = () => {
     });
 
     const searchParam = useSearchParams();
-
-    // Replaced React.useRef with standard state to eliminate the React 19 compiler build error
     const [couponCode, setCouponCode] = useState('');
-    
-    // Stable checkout session idempotency key
     const [idempotencyKey] = useState(() => uuidv4());
-
     const cart = useAppSelector((state) => state.cart);
 
-    // FIX: Cleaned up async/await typing to match the expected QueryFunction<Customer> shape
     const { data: customer, isLoading } = useQuery<Customer>({
         queryKey: ['customer'],
         queryFn: async () => {
@@ -69,7 +63,6 @@ const CustomerForm = () => {
             if (data.paymentUrl) {
                 window.location.href = data.paymentUrl;
             }
-
             alert('Order placed successfully!');
             dispatch(clearCart());
         },
@@ -87,14 +80,13 @@ const CustomerForm = () => {
         }
         const orderData: OrderData = {
             cart: cart.cartItems,
-            couponCode: couponCode, 
+            couponCode: couponCode,
             tenantId: tenantId,
             customerId: customer ? customer._id : '',
             comment: data.comment,
             address: data.address,
             paymentMode: data.paymentMode,
         };
-
         mutate(orderData);
     };
 
@@ -110,33 +102,15 @@ const CustomerForm = () => {
                             <div className="grid gap-6">
                                 <div className="grid gap-3">
                                     <Label htmlFor="fname">First Name</Label>
-                                    <Input
-                                        id="fname"
-                                        type="text"
-                                        className="w-full"
-                                        defaultValue={customer?.firstName}
-                                        disabled
-                                    />
+                                    <Input id="fname" type="text" className="w-full" defaultValue={customer?.firstName} disabled />
                                 </div>
                                 <div className="grid gap-3">
                                     <Label htmlFor="lname">Last Name</Label>
-                                    <Input
-                                        id="lname"
-                                        type="text"
-                                        className="w-full"
-                                        defaultValue={customer?.lastName}
-                                        disabled
-                                    />
+                                    <Input id="lname" type="text" className="w-full" defaultValue={customer?.lastName} disabled />
                                 </div>
                                 <div className="grid gap-3">
                                     <Label htmlFor="email">Email</Label>
-                                    <Input
-                                        id="email"
-                                        type="text"
-                                        className="w-full"
-                                        defaultValue={customer?.email}
-                                        disabled
-                                    />
+                                    <Input id="email" type="text" className="w-full" defaultValue={customer?.email} disabled />
                                 </div>
                                 <div className="grid gap-3">
                                     <div>
@@ -144,54 +118,30 @@ const CustomerForm = () => {
                                             <Label htmlFor="name">Address</Label>
                                             <AddAdress customerId={customer?._id} />
                                         </div>
-
                                         <FormField
                                             name="address"
                                             control={customerForm.control}
-                                            render={({ field }) => {
-                                                return (
-                                                    <FormItem>
-                                                        <FormControl>
-                                                            <RadioGroup
-                                                                onValueChange={field.onChange}
-                                                                className="grid grid-cols-2 gap-6 mt-2">
-                                                                {customer?.addresses.map(
-                                                                    (address) => {
-                                                                        return (
-                                                                            <Card
-                                                                                className="p-6"
-                                                                                key={address.text}>
-                                                                                <div className="flex items-center space-x-2">
-                                                                                    <FormControl>
-                                                                                        <RadioGroupItem
-                                                                                            value={
-                                                                                                address.text
-                                                                                            }
-                                                                                            id={
-                                                                                                address.text
-                                                                                            }
-                                                                                        />
-                                                                                    </FormControl>
-                                                                                    <Label
-                                                                                        htmlFor={
-                                                                                            address.text
-                                                                                        }
-                                                                                        className="leading-normal">
-                                                                                        {
-                                                                                            address.text
-                                                                                        }
-                                                                                    </Label>
-                                                                                </div>
-                                                                            </Card>
-                                                                        );
-                                                                    }
-                                                                )}
-                                                            </RadioGroup>
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                );
-                                            }}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <RadioGroup onValueChange={field.onChange} className="grid grid-cols-2 gap-6 mt-2">
+                                                            {customer?.addresses.map((address) => (
+                                                                <Card className="p-6" key={address.text}>
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <FormControl>
+                                                                            <RadioGroupItem value={address.text} id={address.text} />
+                                                                        </FormControl>
+                                                                        <Label htmlFor={address.text} className="leading-normal">
+                                                                            {address.text}
+                                                                        </Label>
+                                                                    </div>
+                                                                </Card>
+                                                            ))}
+                                                        </RadioGroup>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
                                         />
                                     </div>
                                 </div>
@@ -200,55 +150,33 @@ const CustomerForm = () => {
                                     <FormField
                                         name="paymentMode"
                                         control={customerForm.control}
-                                        render={({ field }) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <RadioGroup
-                                                            onValueChange={field.onChange}
-                                                            className="flex gap-6">
-                                                            <div className="w-36">
-                                                                <FormControl>
-                                                                    <RadioGroupItem
-                                                                        value={'card'}
-                                                                        id={'card'}
-                                                                        className="peer sr-only"
-                                                                        aria-label={'card'}
-                                                                    />
-                                                                </FormControl>
-                                                                <Label
-                                                                    htmlFor={'card'}
-                                                                    className="flex items-center justify-center rounded-md border-2 bg-white p-2 h-16 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                                                                    <CreditCard size={'20'} />
-                                                                    <span className="ml-2">
-                                                                        Card
-                                                                    </span>
-                                                                </Label>
-                                                            </div>
-                                                            <div className="w-36">
-                                                                <FormControl>
-                                                                    <RadioGroupItem
-                                                                        value={'cash'}
-                                                                        id={'cash'}
-                                                                        className="peer sr-only"
-                                                                        aria-label={'cash'}
-                                                                    />
-                                                                </FormControl>
-                                                                <Label
-                                                                    htmlFor={'cash'}
-                                                                    className="flex items-center justify-center rounded-md border-2 bg-white p-2 h-16 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                                                                    <Coins size={'20'} />
-                                                                    <span className="ml-2 text-md">
-                                                                        Cash
-                                                                    </span>
-                                                                </Label>
-                                                            </div>
-                                                        </RadioGroup>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            );
-                                        }}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <RadioGroup onValueChange={field.onChange} className="flex gap-6">
+                                                        <div className="w-36">
+                                                            <FormControl>
+                                                                <RadioGroupItem value={'card'} id={'card'} className="peer sr-only" aria-label={'card'} />
+                                                            </FormControl>
+                                                            <Label htmlFor={'card'} className="flex items-center justify-center rounded-md border-2 bg-white p-2 h-16 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                                                                <CreditCard size={'20'} />
+                                                                <span className="ml-2">Card</span>
+                                                            </Label>
+                                                        </div>
+                                                        <div className="w-36">
+                                                            <FormControl>
+                                                                <RadioGroupItem value={'cash'} id={'cash'} className="peer sr-only" aria-label={'cash'} />
+                                                            </FormControl>
+                                                            <Label htmlFor={'cash'} className="flex items-center justify-center rounded-md border-2 bg-white p-2 h-16 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                                                                <Coins size={'20'} />
+                                                                <span className="ml-2 text-md">Cash</span>
+                                                            </Label>
+                                                        </div>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
                                 </div>
                                 <div className="grid gap-3">
@@ -256,15 +184,13 @@ const CustomerForm = () => {
                                     <FormField
                                         name="comment"
                                         control={customerForm.control}
-                                        render={({ field }) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <Textarea {...field} />
-                                                    </FormControl>
-                                                </FormItem>
-                                            );
-                                        }}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormControl>
+                                                    <Textarea {...field} />
+                                                </FormControl>
+                                            </FormItem>
+                                        )}
                                     />
                                 </div>
                             </div>
@@ -272,14 +198,18 @@ const CustomerForm = () => {
                     </Card>
                     <OrderSummary
                         isPlaceOrderPending={isPlaceOrderPending}
-                        handleCouponCodeChange={(code) => {
-                            setCouponCode(code);
-                        }}
+                        handleCouponCodeChange={(code) => setCouponCode(code)}
                     />
                 </div>
             </form>
         </Form>
     );
 };
+
+const CustomerForm = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <CustomerFormInner />
+    </Suspense>
+);
 
 export default CustomerForm;
