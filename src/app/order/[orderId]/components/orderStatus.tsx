@@ -29,9 +29,9 @@ const StepperChanger = ({ orderId }: { orderId: string }) => {
     const { data } = useQuery<Order>({
         queryKey: ['order', orderId],
         queryFn: async () => {
-            return await getSingleOrder(orderId).then((res) => res.data);
+            return await getSingleOrder(orderId).then((res) => res.data as Order);
         },
-        refetchInterval: 1000 * 30, // every 30 secs.
+        refetchInterval: 1000 * 30,
     });
 
     React.useEffect(() => {
@@ -40,6 +40,7 @@ const StepperChanger = ({ orderId }: { orderId: string }) => {
             setStep(currentStep + 1);
         }
     }, [data]);
+
     return <></>;
 };
 
