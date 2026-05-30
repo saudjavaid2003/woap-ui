@@ -40,7 +40,7 @@ const CustomerForm = () => {
 
     const searchParam = useSearchParams();
 
-    // FIX: Replaced React.useRef with standard state to eliminate the React 19 compiler build error
+    // Replaced React.useRef with standard state to eliminate the React 19 compiler build error
     const [couponCode, setCouponCode] = useState('');
     
     // Stable checkout session idempotency key
@@ -48,10 +48,12 @@ const CustomerForm = () => {
 
     const cart = useAppSelector((state) => state.cart);
 
+    // FIX: Cleaned up async/await typing to match the expected QueryFunction<Customer> shape
     const { data: customer, isLoading } = useQuery<Customer>({
         queryKey: ['customer'],
         queryFn: async () => {
-            return await getCustomer().then((res) => res.data);
+            const response = await getCustomer();
+            return response.data as Customer;
         },
     });
 
@@ -59,7 +61,8 @@ const CustomerForm = () => {
         mutationKey: ['order'],
         mutationFn: async (data: OrderData) => {
             const uniqueKey = customer?._id ? `${idempotencyKey}-${customer._id}` : idempotencyKey;
-            return await createOrder(data, uniqueKey).then((res) => res.data);
+            const response = await createOrder(data, uniqueKey);
+            return response.data;
         },
         retry: 3,
         onSuccess: (data: { paymentUrl: string | null }) => {
@@ -84,7 +87,7 @@ const CustomerForm = () => {
         }
         const orderData: OrderData = {
             cart: cart.cartItems,
-            couponCode: couponCode, // Safely reading from state inside the event handler
+            couponCode: couponCode, 
             tenantId: tenantId,
             customerId: customer ? customer._id : '',
             comment: data.comment,
@@ -270,7 +273,7 @@ const CustomerForm = () => {
                     <OrderSummary
                         isPlaceOrderPending={isPlaceOrderPending}
                         handleCouponCodeChange={(code) => {
-                            setCouponCode(code); // Updates cleanly via state
+                            setCouponCode(code);
                         }}
                     />
                 </div>
